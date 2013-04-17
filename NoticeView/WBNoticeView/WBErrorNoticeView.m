@@ -24,6 +24,8 @@
 
 - (void)show
 {
+    self.view.alpha = 0.9;
+    
     // Obtain the screen width
     CGFloat viewWidth = self.view.bounds.size.width;
     
@@ -41,18 +43,22 @@
     self.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
     self.titleLabel.backgroundColor = [UIColor clearColor];
     self.titleLabel.text = self.title;
+    self.titleLabel.alpha = 0;
+    
     
     // Make the message label
-    self.messageLabel = [[UILabel alloc]initWithFrame:CGRectMake(55.0, 20.0 + 10.0, viewWidth - 70.0, 12.0)];
+    self.messageLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
     self.messageLabel.font = [UIFont systemFontOfSize:13.0];
-    self.messageLabel.textColor = [UIColor colorWithRed:239.0/255.0 green:167.0/255.0 blue:163.0/255.0 alpha:1.0];
+    self.messageLabel.textAlignment = NSTextAlignmentCenter;
+//    self.messageLabel.contentMode = UIViewContentModeCenter;
+    self.messageLabel.textColor = [UIColor whiteColor];
     self.messageLabel.backgroundColor = [UIColor clearColor];
     self.messageLabel.text = self.message;
     
     // Calculate the number of lines it'll take to display the text
     NSInteger numberOfLines = [[self.messageLabel lines]count];
     self.messageLabel.numberOfLines = numberOfLines;
-    [self.messageLabel sizeToFit];
+//    [self.messageLabel sizeToFit];
     CGFloat messageLabelHeight = self.messageLabel.frame.size.height;
     
     CGRect r = self.messageLabel.frame;
@@ -61,12 +67,12 @@
     float noticeViewHeight = 0.0;
     double currOsVersion = [[[UIDevice currentDevice]systemVersion]doubleValue];
     if (currOsVersion >= 6.0f) {
-        noticeViewHeight = messageLabelHeight;
+//        noticeViewHeight = messageLabelHeight;
     } else {
         // Now we can determine the height of one line of text
         r.size.height = self.messageLabel.frame.size.height * numberOfLines;
         r.size.width = viewWidth - 70.0;
-        self.messageLabel.frame = r;
+//        self.messageLabel.frame = r;
         
         // Calculate the notice view height
         noticeViewHeight = 10.0;
@@ -89,7 +95,7 @@
     UIImageView *iconView = [[UIImageView alloc]initWithFrame:CGRectMake(10.0, 10.0, 20.0, 30.0)];
     iconView.image = [UIImage imageWithContentsOfFile:noticeIconImageName];
     iconView.contentMode = UIViewContentModeScaleAspectFit;
-    iconView.alpha = 0.8;
+    iconView.alpha = 0;
     [self.gradientView addSubview:iconView];
     
     // Add the title label
