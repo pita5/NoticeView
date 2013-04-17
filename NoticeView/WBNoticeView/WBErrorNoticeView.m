@@ -24,7 +24,7 @@
 
 - (void)show
 {
-    self.view.alpha = 0.9;
+    self.alpha = 0.9;
     
     // Obtain the screen width
     CGFloat viewWidth = self.view.bounds.size.width;
