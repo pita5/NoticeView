@@ -46,12 +46,15 @@
 @synthesize dismissalBlock = _dismissalBlock;
 @synthesize floating = _floating;
 
-- (id)initWithView:(UIView *)view title:(NSString *)title
+- (id)initWithViewController:(UIViewController *)view title:(NSString *)title
 {
     NSParameterAssert(view);
     self = [super init];
-    if (self) {
-        _view = view;
+    
+    if (self)
+    {
+        _viewController = view;
+        _view = view.view;
         _title = title ?: @"Unknown Error";
         _message = @"Information not provided";
         _duration = 0.5;
@@ -61,6 +64,7 @@
         _slidingMode = WBNoticeViewSlidingModeDown;
         _floating = NO;
     }
+    
     return self;
 }
 
@@ -93,27 +97,30 @@
 
     [self updateAccessibilityLabels];
 
-    //set default originY if WBNoticeViewSlidingModeUp
-    if ((self.slidingMode == WBNoticeViewSlidingModeUp) && (self.originY == 0)) {
-        self.originY = self.view.bounds.size.height - self.gradientView.bounds.size.height;
-        self.gradientView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    } else
-    {
-        self.gradientView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-    }
+//    //set default originY if WBNoticeViewSlidingModeUp
+//    if ((self.slidingMode == WBNoticeViewSlidingModeUp) && (self.originY == 0)) {
+//        self.originY = self.view.bounds.size.height - self.gradientView.bounds.size.height;
+//        self.gradientView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+//    } else
+//    {
+//        self.gradientView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+//    }
     
     // Go ahead, display it
     [UIView animateWithDuration:self.duration animations:^ {
-        CGRect newFrame = self.gradientView.frame;
-        //add scroll offset if scrolled
-        double scrollOffsetY = 0.0f;
-        if ([self.view isKindOfClass:[UIScrollView class]]) {
-            UIScrollView *scrollView = (UIScrollView *)self.view;
-            scrollOffsetY = scrollView.contentOffset.y;
-        }
-        newFrame.origin.y = self.originY + scrollOffsetY;
-        self.gradientView.frame = newFrame;
-        self.gradientView.alpha = self.alpha;
+        
+        self.gradientView.alpha = 1.0f;
+        
+//        CGRect newFrame = self.gradientView.frame;
+//        //add scroll offset if scrolled
+//        double scrollOffsetY = 0.0f;
+//        if ([self.view isKindOfClass:[UIScrollView class]]) {
+//            UIScrollView *scrollView = (UIScrollView *)self.view;
+//            scrollOffsetY = scrollView.contentOffset.y;
+//        }
+//        newFrame.origin.y = self.originY + scrollOffsetY;
+//        self.gradientView.frame = newFrame;
+//        self.gradientView.alpha = self.alpha;
         [self registerObserver];
     } completion:^ (BOOL finished) {
         // if it's not sticky, hide it automatically
@@ -131,14 +138,17 @@
 {
     [UIView animateWithDuration:duration delay:delay options:UIViewAnimationOptionCurveEaseOut animations:^ {
         [self unregisterObserver];
-        CGRect newFrame = self.gradientView.frame;
-        if (self.slidingMode == WBNoticeViewSlidingModeUp)  {
-            newFrame.origin.y = self.gradientView.frame.origin.y + self.gradientView.bounds.size.height;
-        } else
-        {
-            newFrame.origin.y = hiddenYOrigin;
-        }
-        self.gradientView.frame = newFrame;
+        
+        self.gradientView.alpha = 0.0f;
+        
+//        CGRect newFrame = self.gradientView.frame;
+//        if (self.slidingMode == WBNoticeViewSlidingModeUp)  {
+//            newFrame.origin.y = self.gradientView.frame.origin.y + self.gradientView.bounds.size.height;
+//        } else
+//        {
+//            newFrame.origin.y = hiddenYOrigin;
+//        }
+//        self.gradientView.frame = newFrame;
     } completion:^ (BOOL finished) {
         if (self.dismissalBlock) self.dismissalBlock(NO);
         // Cleanup

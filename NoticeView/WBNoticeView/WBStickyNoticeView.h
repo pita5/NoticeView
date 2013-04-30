@@ -24,6 +24,6 @@
  @param title The title of the notice.
  @return The newly created sticky notice object.
  */
-+ (WBStickyNoticeView *)stickyNoticeInView:(UIView *)view title:(NSString *)title;
++ (WBStickyNoticeView *)stickyNoticeInViewController:(UIViewController *)viewController title:(NSString *)title;
 
 @end

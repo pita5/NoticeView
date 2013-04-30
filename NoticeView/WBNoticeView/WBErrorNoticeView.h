@@ -13,6 +13,8 @@
  */
 @interface WBErrorNoticeView : WBNoticeView
 
+@property (nonatomic) UIColor* color; 
+
 ///-------------------------------
 /// @name Creating an Error Notice
 ///-------------------------------
@@ -25,6 +27,6 @@
  @param message The message of the notice.
  @return The newly created error notice object.
  */
-+ (WBErrorNoticeView *)errorNoticeInView:(UIView *)view title:(NSString *)title message:(NSString *)message;
++ (WBErrorNoticeView *)errorNoticeInViewController:(UIViewController *)viewController title:(NSString *)title message:(NSString *)message;
 
 @end

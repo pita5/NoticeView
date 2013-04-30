@@ -18,6 +18,10 @@ typedef enum WBNoticeViewSlidingMode {
  */
 @interface WBNoticeView : NSObject
 
+@property (nonatomic, weak) UIViewController* viewController;
+
+- (void)cleanup;
+
 ///----------------------------
 /// @name Initializing a Notice
 ///----------------------------
@@ -31,7 +35,7 @@ typedef enum WBNoticeViewSlidingMode {
  @param title The title for the notice.
  @return The receiver, initialized with the given view and title.
  */
-- (id)initWithView:(UIView *)view title:(NSString *)title;
+- (id)initWithViewController:(UIViewController *)view title:(NSString *)title;
 
 ///---------------------------------
 /// @name Configuring Notice Display

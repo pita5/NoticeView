@@ -10,12 +10,15 @@
 #import "WBNoticeView+ForSubclassEyesOnly.h"
 #import "WBRedGradientView.h"
 
+@interface WBErrorNoticeView ()
+@property (nonatomic) UIWindow* window;
+@end
+
 @implementation WBErrorNoticeView
 
-+ (WBErrorNoticeView *)errorNoticeInView:(UIView *)view title:(NSString *)title message:(NSString *)message
-{
-    WBErrorNoticeView *notice = [[WBErrorNoticeView alloc]initWithView:view title:title];
-    
++ (WBErrorNoticeView *)errorNoticeInViewController:(UIViewController *)viewController title:(NSString *)title message:(NSString *)message
+{    
+    WBErrorNoticeView* notice = [[WBErrorNoticeView alloc] initWithViewController:viewController title:title];
     notice.message = message;
     notice.sticky = NO;
     
@@ -24,6 +27,23 @@
 
 - (void)show
 {
+    CGRect f = [[UIScreen mainScreen] bounds];
+    f.origin.y = f.size.height - 100;
+    f.size.height = 100;
+    
+    self.window = [[UIWindow alloc] initWithFrame:f];
+    self.window.backgroundColor = [UIColor clearColor];
+    _window.clipsToBounds = NO;
+    
+    UIViewController* vc = [[UIViewController alloc] init];
+    vc.view.backgroundColor = [UIColor clearColor];
+    vc.view.clipsToBounds = NO;
+    
+    _window.rootViewController = vc;
+    _window.windowLevel = UIWindowLevelStatusBar;
+    [_window makeKeyAndVisible];
+    _window.hidden = NO;
+    
     self.alpha = 0.9;
     
     // Obtain the screen width
@@ -45,12 +65,10 @@
     self.titleLabel.text = self.title;
     self.titleLabel.alpha = 0;
     
-    
     // Make the message label
     self.messageLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-    self.messageLabel.font = [UIFont systemFontOfSize:13.0];
+    self.messageLabel.font = [UIFont systemFontOfSize:15.0];
     self.messageLabel.textAlignment = NSTextAlignmentCenter;
-//    self.messageLabel.contentMode = UIViewContentModeCenter;
     self.messageLabel.textColor = [UIColor whiteColor];
     self.messageLabel.backgroundColor = [UIColor clearColor];
     self.messageLabel.text = self.message;
@@ -58,7 +76,6 @@
     // Calculate the number of lines it'll take to display the text
     NSInteger numberOfLines = [[self.messageLabel lines]count];
     self.messageLabel.numberOfLines = numberOfLines;
-//    [self.messageLabel sizeToFit];
     CGFloat messageLabelHeight = self.messageLabel.frame.size.height;
     
     CGRect r = self.messageLabel.frame;
@@ -66,9 +83,13 @@
     
     float noticeViewHeight = 0.0;
     double currOsVersion = [[[UIDevice currentDevice]systemVersion]doubleValue];
-    if (currOsVersion >= 6.0f) {
+    
+    if (currOsVersion >= 6.0f)
+    {
 //        noticeViewHeight = messageLabelHeight;
-    } else {
+    }
+    else
+    {
         // Now we can determine the height of one line of text
         r.size.height = self.messageLabel.frame.size.height * numberOfLines;
         r.size.width = viewWidth - 70.0;
@@ -85,11 +106,21 @@
     noticeViewHeight += 30.0;
     
     // Make sure we hide completely the view, including its shadow
-    float hiddenYOrigin = self.slidingMode == WBNoticeViewSlidingModeDown ? -noticeViewHeight - 20.0: self.view.bounds.size.height;
+//    float hiddenYOrigin = self.slidingMode == WBNoticeViewSlidingModeDown ? -noticeViewHeight - 20.0: self.view.bounds.size.height;
     
     // Make and add the notice view
-    self.gradientView = [[WBRedGradientView alloc] initWithFrame:CGRectMake(0.0, hiddenYOrigin, viewWidth, noticeViewHeight + 10.0)];
-    [self.view addSubview:self.gradientView];
+    self.gradientView = [[UIView alloc] initWithFrame:CGRectMake(10.0, 0.0f, viewWidth-20, noticeViewHeight + 10.0)];
+    
+    self.gradientView.backgroundColor = (self.color)?self.color:[UIColor colorWithRed:225.0f/255.0f green:98.0f/255.0f blue:89.0f/255.0f alpha:1];
+    
+    self.gradientView.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.gradientView.layer.shadowRadius = 5.0f;
+    self.gradientView.layer.shadowOpacity = 0.8;
+    self.gradientView.layer.shadowOffset = CGSizeMake(2, 2);
+    self.gradientView.alpha = 0.0f;
+    [vc.view addSubview:self.gradientView];
+    
+    self.messageLabel.frame = self.gradientView.bounds;
     
     // Make and add the icon view
     UIImageView *iconView = [[UIImageView alloc]initWithFrame:CGRectMake(10.0, 10.0, 20.0, 30.0)];
@@ -101,20 +132,29 @@
     // Add the title label
     [self.gradientView addSubview:self.titleLabel];
     
+    self.gradientView.tag = 9001;
+    
     // Add the message label
     [self.gradientView addSubview:self.messageLabel];
     
     // Add the drop shadow to the notice view
-    CALayer *noticeLayer = self.gradientView.layer;
-    noticeLayer.shadowColor = [[UIColor blackColor]CGColor];
-    noticeLayer.shadowOffset = CGSizeMake(0.0, 3);
-    noticeLayer.shadowOpacity = 0.50;
-    noticeLayer.masksToBounds = NO;
-    noticeLayer.shouldRasterize = YES;
+//    CALayer *noticeLayer = self.gradientView.layer;
+//    noticeLayer.shadowColor = [[UIColor blackColor]CGColor];
+//    noticeLayer.shadowOffset = CGSizeMake(0.0, 3);
+//    noticeLayer.shadowOpacity = 0.50;
+//    noticeLayer.masksToBounds = NO;
+//    noticeLayer.shouldRasterize = YES;
     
-    self.hiddenYOrigin = hiddenYOrigin;
+//    self.hiddenYOrigin = hiddenYOrigin;
     
     [self displayNotice];
+}
+
+- (void)cleanup
+{
+    [super cleanup];
+    
+    self.window = nil;
 }
 
 @end

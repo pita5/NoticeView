@@ -12,9 +12,9 @@
 
 @implementation WBStickyNoticeView
 
-+ (WBStickyNoticeView *)stickyNoticeInView:(UIView *)view title:(NSString *)title
++ (WBStickyNoticeView *)stickyNoticeInViewController:(UIViewController *)view title:(NSString *)title
 {
-    WBStickyNoticeView *notice = [[WBStickyNoticeView alloc]initWithView:view title:title];
+    WBStickyNoticeView *notice = [[WBStickyNoticeView alloc]initWithViewController:view title:title];
 
     notice.sticky = YES;
     
